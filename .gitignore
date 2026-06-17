@@ -1,0 +1,29 @@
+# Python virtual environment (machine-specific, recreated by scripts/setup.ps1)
+.venv*/
+__pycache__/
+*.pyc
+
+# Upstream ComfyUI + third-party custom nodes + downloaded model weights.
+# All recreated by scripts/setup.ps1 (our AMF formats live in scripts/video_formats/).
+/ComfyUI/
+
+# Model weights (belt-and-suspenders; normally under ComfyUI/models)
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.bin
+
+# Large media: source clips and upscale outputs
+/outputs/
+/runs/
+*.mp4
+*.mkv
+*.mov
+*.avi
+*.webm
+
+# Logs
+*.log
+*.out.log
+*.err.log
