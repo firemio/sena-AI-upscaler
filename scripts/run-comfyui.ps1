@@ -6,7 +6,11 @@ param(
     [string]$Gfx = ""
 )
 
-$ErrorActionPreference = "Stop"
+# Windows PowerShell 5.1 turns a native command's stderr into a terminating
+# NativeCommandError when output is redirected and ErrorActionPreference is
+# "Stop". ComfyUI logs normal startup info to stderr, which would kill the
+# server on launch -- use "Continue" so stderr is just logged.
+$ErrorActionPreference = "Continue"
 $python = Join-Path $VenvPath "Scripts\python.exe"
 
 function Get-GpuVendor {

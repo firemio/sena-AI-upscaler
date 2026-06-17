@@ -10,7 +10,13 @@ param(
     [string]$CudaIndexUrl = "https://download.pytorch.org/whl/cu128"
 )
 
-$ErrorActionPreference = "Stop"
+# Windows PowerShell 5.1 turns a native command's stderr into a terminating
+# NativeCommandError when output is redirected and ErrorActionPreference is
+# "Stop" -- git/pip/winget all write progress to stderr, which would abort the
+# script mid-clone even on success. Use "Continue" so native stderr is just
+# logged, and route git's progress to stdout so it never looks like an error.
+$ErrorActionPreference = "Continue"
+$env:GIT_REDIRECT_STDERR = "2>&1"
 
 function Test-Command {
     param([string]$Name)
@@ -84,7 +90,9 @@ $pip = Join-Path $VenvPath "Scripts\pip.exe"
 # --- PyTorch backend selection (NVIDIA CUDA vs AMD ROCm vs CPU) ---
 if ($Backend -eq "auto") {
     $Backend = Get-GpuVendor
+    # Get-GpuVendor returns nvidia/amd/cpu; map the GPU vendors to torch backends.
     if ($Backend -eq "nvidia") { $Backend = "cuda" }
+    elseif ($Backend -eq "amd") { $Backend = "rocm" }
 }
 Write-Host "[setup] Installing PyTorch backend: $Backend"
 
